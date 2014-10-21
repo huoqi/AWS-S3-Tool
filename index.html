@@ -1,0 +1,591 @@
+<!DOCTYPE html >
+<html lang="zh-CN">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>AWS S3 Tool</title>
+        <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/select2/3.5.0/select2.min.css">
+        <link rel="shortcut icon" type="image/x-icon" href="icon-64.png" />
+    </head>
+    
+    <body>
+        <div class="navbar navbar-default navbar-static-top" role="navgation" style="min-height: 34px; margin-bottom: 0;">
+            <div class="container" style="margin-bottom: 0;">
+                <ul class="nav navbar-nav" style="margin-top: 2px;">
+                    <li><a href="javascript:;" onclick="return toggleKey()" style="padding: 5px 15px;"><span class="glyphicon glyphicon-cog"></span> </a></li>
+                    <li><a href="javascript:;" onclick="return about()" style="padding: 5px 15px;"><span class="glyphicon glyphicon-stats"></span> </a></li>
+                </ul>
+                <form id="key" class="form-inline col-lg-6" role="form" onsubmit="return false;" style="margin-top: 3px; float: right; display: none;">
+                    <div class="form-group" style="width: 43%;">
+                        <label class="sr-only" for="accessKey" style="height: 26px;">accessKey</label>
+                        <input type="text" class="form-control" id="accessKey" placeholder="accessKey" style="width: 100%; height: 26px; font-size: 12px;" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="secretAccessKey" style="height: 26px;">secretAccessKey</label>
+                        <input type="password" class="form-control" id="secretAccessKey" placeholder="secretAccessKey" style="height: 26px;" required>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="remember" type="checkbox" value="remember">Remember
+                        </label>
+                    </div>
+                    <button id="btn_key" type="button" class="btn btn-default btn-xs">OK</button>
+                </form>
+            </div>
+            <div class="container" id="about">
+                
+            </div>
+        </div>
+    	<div class="container" style="width: 96%">
+    		<div class="masterhead">
+                <div style="width: 100%; display: table">
+                    <div style="margin-left: 42%; width: 16%; float: left; position: relative;">
+                        <h2 style="text-align: center; width: 100%; margin: 10px 0 5px;">AWS S3 Tool</h2>
+                    </div>
+                    <div style="width: 3%; padding-top: 18px; float: left; position: relative;">
+                        <img id="loading" src="loading.gif" alt="loading" style="margin-left: 15px 0 10px; display: none;">
+                    </div>
+                </div>
+    		</div>
+    		<div class="jumbotron" style="padding: 15px 20px; margin-bottom: 15px;">
+                <div class="row">
+        			<div class="col-lg-4">
+                        <select id="select_regions" style="width: 74%;">
+                            <optgroup label="China">
+                                <option value="cn-north-1">Beijing</option>
+                            </optgroup>
+                            <optgroup label="Global">
+                                <option value="us-east-1" selected="selected">US-Standard</option>
+                                <option value="us-west-1">US West (Northern California)</option>
+                                <option value="us-west-2">US West (Oregon)</option>
+                                <option value="eu-west-1">EU (Ireland) </option>
+                                <option value="ap-southeast-1">Asia Pacific (Singapore) </option>
+                                <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                                <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                                <option value="sa-east-1">South America (Sao Paulo)</option>
+                            </optgroup>
+                        </select>
+                        <button id="list_buckets" class="btn btn-sm btn-default" style="float: right; width: 25%; height: 26px; padding: 3px 8px;">List Buckets</button>
+                        <div class="well" style="width: 100%; height: 399px; padding: 8px 5px 0 5px; margin: 5px 0; overflow: auto;">
+                            <table class="table table-striped table-condensed table-hover" style="width: 100%; font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th class="label label-info" style="text-align: left; display: table-cell; font-size: 11px;">Buckets List</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="buckets_list">
+                                    <!-- buctets list here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="input-group">
+                            <input id="input_new_bucket" type="text" class="form-control" placeholder="New Bucket Name" style="padding: 0 10px; height: 26px;">
+                            <span class="input-group-btn" style="height: 26px; vertical-align: middle;">
+                                <button id="create_bucket" class="btn btn-default btn-sm" type="button" style="height: 26px; padding-top: 3px">Create Bucket</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4" style="padding-left: 0; padding-right: 0;">
+                        <div class="input-group">
+                            <input id="input_bucket" type="text" class="form-control" placeholder="Existing Bucket Name" style="padding: 0 10px; height: 26px;">
+                            <span class="input-group-btn" style="height: 26px; vertical-align: middle;">
+                                <button id="btn_list_object" class="btn btn-default btn-sm" type="button" style="height: 26px; padding-top: 3px">List Objects</button>
+                            </span>
+                        </div>
+                        <div id="location" style="width: 100%; text-align: left; padding-left: 10px; margin-top: 7px; font-size: 13px; overflow: auto;">Location:
+                            <!-- show location -->
+                        </div>
+                        <div class="well" style="width: 100%; height: 378px; padding: 8px 5px 0 5px; margin: 0 0 5px; overflow: auto;">
+                            <table class="table table-striped table-condensed table-hover" style="width: 100%; font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th class="label label-info" style="min-width: 100%; text-align: left; display: table-cell; font-size: 11px;">Objects List</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="objects_list">
+                                    <!-- objects list here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="input-group">
+                            <input id="input_new_folder" type="text" class="form-control" placeholder="New Folder" style="padding: 0 10px; height: 26px;">
+                            <span class="input-group-btn" style="height: 26px; vertical-align: middle;">
+                                <button id="create_folder" dir="" class="btn btn-default btn-sm" type="button" style="height: 26px; padding-top: 3px">Create Folder</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="well" style="height: 207px; padding: 8px 5px 0 5px; margin-bottom: 8px;">
+                            <table class="table table-condensed table-hover" style="margin-bottom: 0; width: 100%; font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th class="label label-info" style="text-align: left; display: table-cell; font-size: 11px;">Upload Files</th>
+                                    </tr>
+                                </thead>
+                                <!-- <tbody id="buckets_list">
+                                    buctets list here
+                                </tbody> -->
+                            </table>
+                            <form class="form-horizontal" id="upload" role="form" onsubmit="return false;" style="margin-top: 0; width: 100%; font-size: 11px;">
+                                <div class="form-group" style="margin-bottom: 6px;">
+                                    <label class="col-lg-3 control-label" for="input_files" style="padding-right: 0;">File Upload</label>
+                                    <div class="col-lg-9" style="padding-top: 7px;">
+                                        <input type="file" id="input_files" style="width: 95%;" multiple></input>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="col-lg-3 control-label" for="select_acl" style="padding-right: 0;">ACL</label>
+                                    <div class="col-lg-9">
+                                        <select id="select_acl" style="width: 95%;">
+                                            <option value="private">Private</option>
+                                            <option value="public-read" selected="selected">Public Read</option>
+                                            <option value="public-read-write">Public Read & Write</option>
+                                            <option value="authenticated-read">Authenticated Read</option>
+                                            <option value="bucket-owner-read">Bucket Owner Read</option>
+                                            <option value="bucket-owner-full-control">Bucket Owner Full Control</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 2px;">
+                                    <label class="col-lg-3 control-label" for="storage_class" style="padding-right: 0;">Storage Class</label>
+                                    <div class="col-lg-9" id="storage_class">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="storage_class" id="storage_class_standard" value="STANDARD" checked> Standard
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="storage_class" id="storage_class_redundancy" value="REDUCED_REDUNDANCY"> Reduced Redundancy
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 2px;">
+                                    <label class="col-lg-3 control-label" for="content_type" style="padding-right: 0;">Content Type</label>
+                                    <div class="col-lg-9" style="padding-top: 4px;">
+                                        <input type="checkbox" name="content_type" id="content_type" value="auto" checked> Figure Out Content Types Automatically
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="col-lg-3 control-label" for="encryption" style="padding-right: 0;">Encryption</label>
+                                    <div class="col-lg-9" style="padding-top: 4px;">
+                                        <input type="checkbox" name="encryption" id="encryption" value="encryption"> Use Server Side Encryption
+                                    </div>
+                                </div> 
+                                <div class="form-group" style="margin-bottom: 4px;">
+                                    <div class="col-lg-offset-3 col-lg-9">
+                                        <button id="upload_files" type="button" class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-upload"></span> Start Upload
+                                        </button>
+                                        <img id="uploading" src="loading.gif" alt="loading" style="margin-left: 15px 0 10px; display: none;">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="well" style="height: 245px; padding: 8px 5px 0 5px; margin-bottom: 0; overflow-y: auto;">
+                            <table class="table table-striped table-condensed table-hover" style="width: 100%; font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th class="label label-info" style="min-width: 20%; text-align: left; display: table-cell; font-size: 11px;">Properties</th>
+                                        <th class="label label-info" style="min-width: 70%; text-align: left; display: table-cell; font-size: 11px;"></th>                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="properties_list">
+                                    <!-- properties list here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    		</div>
+    	</div>
+        <footer class="footer" style="text-align: center;">
+            &copy;2014 <a href="https://huoqi.github.com">huoqi</a> AWS S3 Tool
+        </footer>
+
+        <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+        <script type="text/javascript" src="http://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+        <script type="text/javascript" src="http://cdn.bootcss.com/select2/3.5.0/select2.min.js"></script>
+        <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.0.21.min.js"></script>
+        <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript">
+        var region;
+        AWS.config.update({
+                apiVersion: {s3: '2006-03-01'}
+                // signatureVersion: 'v4'
+        });
+
+        jQuery(document).ready(function($) {
+            region = $('#select_regions').val();
+            if($.cookie('remember') == 'true') {
+                document.getElementById('remember').checked = true;
+            }
+
+            var aKey = $.cookie('accessKey');
+            var sKey = $.cookie('secretAccessKey');
+            if(aKey == undefined) aKey = '';
+            if(sKey == undefined) sKey = '';
+            $('#accessKey').val(aKey);
+            $('#secretAccessKey').val(sKey);
+            if(aKey == '' || sKey == ''){
+                $('#key').show();
+            } else {
+                AWS.config.update({
+                    accessKeyId: aKey, 
+                    secretAccessKey: sKey
+                });
+            }
+
+            $('#select_regions').select2({
+                placeholder: "Select An AWS Region",
+                allowClear: false
+            });
+
+            $('#select_acl').select2({
+                placeholder: "Select ACL",
+                allowClear: true
+            });
+
+            $('#btn_key').click(function() {
+                var aKey = $('#accessKey').val();
+                var sKey = $('#secretAccessKey').val();
+                $.trim(aKey);
+                $.trim(sKey);
+                if (aKey != '' || sKey != '') {
+                    AWS.config.update({
+                        accessKeyId: aKey, 
+                        secretAccessKey: sKey
+                    });
+                    $("#key").hide(400);
+                    var remember = document.getElementById('remember').checked;
+                    if (remember == true) {
+                        $.cookie('accessKey', aKey, {expires: 30});
+                        $.cookie('secretAccessKey', sKey, {expires: 30});
+                        $.cookie('remember', true, {expires: 30});
+                    } else {
+                        $.cookie('accessKey', '');
+                        $.cookie('secretAccessKey', '');
+                        $.cookie('remember', false);
+                    }
+                }
+            });
+
+            $('#select_regions').on('select2-selecting', function(event) {
+                region = event.val;
+            });
+
+            $('#list_buckets').click(function() {
+                listBuckets(region);
+            });
+
+            $('#btn_list_object').click(function() {
+                var bucket = $('#input_bucket').val();
+                if(bucket != ''){
+                    loading();
+                    func.listObjects(bucket, '');
+                }
+            });
+
+            $('#create_bucket').click(function() {
+                var bucket = $('#input_new_bucket').val();
+                if (bucket != '') {
+                    loading();
+                    AWS.config.region = region;
+                    var s3 = new AWS.S3();
+                    if(region == 'us-east-1') region = 'US';
+                    var params = {
+                        Bucket: bucket,
+                        CreateBucketConfiguration: {
+                            LocationConstraint: region
+                        }
+                    };
+
+                    s3.createBucket(params, function(err, data) {
+                        if (err) {
+                            alert(err);
+                            loaded();
+                        } else {
+                            var cors = {
+                                Bucket: bucket,
+                                CORSConfiguration: {
+                                    CORSRules: [{
+                                        AllowedHeaders: ['*'],
+                                        AllowedMethods: ['GET', 'POST', 'PUT', 'HEAD', 'DELETE'],
+                                        AllowedOrigins: ['*'],
+                                        MaxAgeSeconds: 3000
+                                    }]
+                                }
+                            }
+                            s3.putBucketCors(cors, function(err, data) {
+                                if(err) alert(err);
+                                else alert('Create bucket successfully!');
+                                listBuckets(region);
+                                loaded();
+                            });
+                        }
+                    })
+                }
+            });
+
+            $('#create_folder').click(function() {
+                var bucket = $('#location').attr('bucket');
+                var dir = $('#location').attr('dir');
+                var folder = $('#input_new_folder').val();
+                if(bucket != '' && folder != '') {
+                    loading();
+                    AWS.config.region = region;
+                    var s3 = new AWS.S3();
+                    var params = {
+                        Bucket: bucket,
+                        Key: dir + folder + '/',
+                        ACL: 'public-read'
+                    };
+                    s3.putObject(params, function(err, data) {
+                        if(err) {
+                            alert(err);
+                            loaded();
+                        }
+                        else {
+                            func.listObjects(bucket, dir);
+                            alert('Create New Folder Done!');
+                            $('#input_new_folder').val('');
+                        }
+                    });
+                }
+            });
+
+            $('#upload_files').click(function() {
+                var bucket = $('#location').attr('bucket');
+                if(bucket == '') {
+                    alert('Please Select A Bucket!');
+                    return;
+                }
+                var dir = $('#location').attr('dir');
+                var files = document.getElementById('input_files').files;//$('#input_files');
+                if (files == '') {
+                    alert('Please Select Files!');
+                    return;
+                };
+                var acl = $('#select_acl').val();
+                var storageClass = $('input[name="storage_class"]:checked').val();
+                var figure_content = $('input[name="content_type"]:checked').val();
+                var encryption = '';
+                if (document.getElementById('encryption').checked) {
+                    var encryption = 'AES256';
+                };
+                var n = 0, filesSize = 0, endTime, useTime;
+                var startTime = (new Date()).getTime();
+
+                for(var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    var blob = new Blob([file]);
+                    var params = {
+                        Bucket: bucket,
+                        Key: dir + files[i].name,
+                        ACL: acl,
+                        Body: blob,
+                        ContentLength: file.size,
+                        StorageClass: storageClass
+                    };
+                    if(figure_content == 'auto') {
+                        params.ContentType = file.type;
+                    }
+                    if(encryption != '') {
+                        params.ServerSideEncryption = encryption;
+                    }
+                    $('#uploading').show();
+                    AWS.config.region = region;
+                    var s3 = new AWS.S3();
+                    
+                    filesSize += file.size;
+                    s3.putObject(params, function(err, data) {
+                        if(err) {
+                            alert(err);
+                            $('#uploading').hide();
+                            return;
+                        }
+                        else {
+                            endTime = (new Date()).getTime();
+                            func.listObjects(bucket, dir);
+                            if(++n == files.length) {
+                                $('#uploading').hide();
+                                useTime = (endTime - startTime) / 1000;
+                                speed = formatFileSize(filesSize / useTime) + '/s';
+                                useTime.toFixed(3);
+                                alert(files.length + ' file(s) has been uploaded!\nTotal Files Size: ' + formatFileSize(filesSize) +
+                                    '\nUsed ' + useTime + 's\nAverage upload speed: ' + speed);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        var func = {
+            listObjects: function(bucket, prefix) {
+                AWS.config.region = region;
+                var s3 = new AWS.S3();
+                var params = {
+                    Bucket: bucket,
+                    // Delimiter: '/'
+                    Prefix: prefix
+                }
+                loading();
+                s3.listObjects(params, function(err, data) {
+                    if(err) alert(err);
+                    else {
+                        $('#objects_list').html('');
+                        $.each(data.Contents, function(index, val) {
+                            var objects = '';
+                            var file = val.Key.replace(prefix, "");
+                            if(file == '') return true; // equal continue //file = './';
+                            var index = file.indexOf('/');
+                            if(index > -1){
+                                if(index == file.length-1) {  //folder
+                                    var url = '';
+                                    objects += '<tr onclick="showProperties(\'' + val.Key + '\',\'' + 
+                                        val.Size + '\',\'' + val.ETag.replace(/\"/g,"") + '\',\'' + val.LastModified + '\',\'' + 
+                                        val.StorageClass + '\',\'' + val.Owner.DisplayName + '\',\'' + url + '\');">' +
+                                        '<td style="white-space: nowrap;"><span class="glyphicon glyphicon-folder-close"></span> ' +
+                                        '<a href="javascript:;" onclick="pageListObjects(\'' + bucket + '\', \'' + val.Key + '\')">' + 
+                                        file.substring(0, file.length-1) + '</a></td></tr>';
+                                }
+                            } else {
+                                var url = s3.endpoint.href + bucket + '/' + prefix + file;
+                                objects += '<tr onclick="showProperties(\'' + file + '\',\'' + 
+                                    val.Size + '\',\'' + val.ETag.replace(/\"/g,"") + '\', \'' + val.LastModified + '\',\'' + 
+                                    val.StorageClass + '\',\'' + val.Owner.DisplayName + '\',\'' + url + '\');">' +
+                                    '<td style="white-space: nowrap;"><span class="glyphicon glyphicon-file"></span> ' + file + '</td></tr>';
+                            }
+                            $('#objects_list').append(objects);
+                        });
+                        showLocation(bucket, prefix);
+                    }
+                    loaded();
+                });
+            }        
+        }
+
+        function listBuckets(region) {
+            if(region != 'cn-north-1') region = 'us-east-1';
+            AWS.config.region = region;
+            var s3 = new AWS.S3();
+
+            loading();
+            s3.listBuckets(function(err, data) {
+                if(err) alert(err);
+                else {
+                    $('#buckets_list').html('');
+                    var str = '';
+                    $.each(data.Buckets, function(index, val) {
+                        str += '<tr onclick="changeBucket(\''+ val.Name +'\')"><td>' +
+                            '<span class="glyphicon glyphicon-hdd"></span> ' + val.Name + '</tr></td>';
+                    });
+                    $('#buckets_list').html(str);
+                }
+                loaded();
+            });
+        }
+
+        function changeBucket(bucket) {
+            $('#input_bucket').val(bucket);
+        }
+
+        function pageListObjects(bucket, prefix) {              
+            func.listObjects(bucket, prefix);
+        }
+
+        function showLocation(bucket, prefix) {
+            var str = '<nobr>Location: ';
+            str += '<a href="javascript:;" onclick="pageListObjects(\'' + bucket + '\', \'\')">' + bucket + '</a>';
+            var nextPre = '';
+            $.each(prefix.split('/'), function(index, val) {
+                if(val != '') {
+                    nextPre += val + '/';
+                    str += '/<a href="javascript:;" onclick="pageListObjects(\'' + bucket + '\', \'' + nextPre + '\')">' + val + '</a>'; 
+                }
+            });
+            str += '<nobr>';
+            $('#location').attr('bucket',bucket);
+            $('#location').attr('dir', prefix);
+            $('#location').html(str);
+        } 
+
+        function showProperties(file, size, etag, lastModified, storageClass, owner, url) {
+            var filename = file;
+            if(file.indexOf('/') > -1) {
+                file = file.substring(0, file.length-1);
+                file = file.substring(file.lastIndexOf('/')+1);
+            }
+            var str = '<tr><td>Name</td><td>' + file + ' <a onclick="pageDeleteObject(\'' + filename + '\')" ' +
+                'href="javascript:;"><span class="glyphicon glyphicon-trash"></span> </a></td></tr>';
+            str += '<tr><td>Size</td><td>' + size + '(' + formatFileSize(size) + ')</td></tr>';
+            str += '<tr><td>ETag</td><td>' + etag + '</td></tr>';
+            str += '<tr><td>LastModified</td><td>' + lastModified + '</td></tr>';
+            str += '<tr><td>StorageClass</td><td>' + storageClass + '</td></tr>';
+            str += '<tr><td>Owner</td><td>' + owner + '</td></tr>';
+            str += '<tr><td>URL</td><td><a href="' + url + '" target="_blank" download="' + file + '">' + url + '</a></td></tr>';
+            $('#properties_list').html(str);
+        }
+
+        function pageDeleteObject(file) {
+            var confirmed = confirm('Do you want to delete: "' + file + '" ?');
+            if(confirmed) {
+                var bucket = $('#location').attr('bucket');
+                var prefix = $('#location').attr('dir');
+                var params = {
+                    Bucket: bucket,
+                    Key: file
+                };
+                AWS.config.region = region;
+                var s3 = new AWS.S3();
+
+                loading();
+                s3.deleteObject(params, function(err, data) {
+                    if(err) {
+                        loaded();
+                        alert(err);
+                    }
+                    else {
+                        func.listObjects(bucket, prefix);
+                        alert('"' + file + '" has been deleted!');
+                    }
+                });
+            }
+        }
+
+        function formatFileSize(size){
+            if(size == 0) return '';
+            if(size < 1024) return size.toFixed(0) + "B";
+            if(size < 1048576) {
+                size = size / 1024;
+                return size.toFixed(1) + "KB";
+            }
+            if(size < 1073741824) {
+                size = size / 1048576;
+                return size.toFixed(3) + "MB";
+            } else {
+                size = size / 1073741824;
+                return size.toFixed(3) + "GB";
+            }     
+        }
+
+        function toggleKey() {
+            $("#key").toggle(400);
+            return false;
+        }
+
+        function about() {
+            window.open('about.html', '', 'width=300, height=200, top=50, left=50');
+            return false;
+        }
+
+        function loading(){
+            $('#loading').css('display', 'inline');
+        }
+
+        function loaded(){
+            $('#loading').css('display', 'none');
+        }
+        
+        </script>
+    </body>
+</html>
