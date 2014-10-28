@@ -517,7 +517,10 @@
             }
             var str = '<tr><td>Name</td><td>' + file + ' <a onclick="pageDeleteObject(\'' + filename + '\')" ' +
                 'href="javascript:;"><span class="glyphicon glyphicon-trash"></span> </a></td></tr>';
-            str += '<tr><td>Size</td><td>' + size + '(' + formatFileSize(size) + ')</td></tr>';
+            str += '<tr><td>Size</td><td>' + size ;
+            if( size > 0 ) 
+                str += '(' + formatFileSize(size) + ')';
+            str += '</td></tr>';
             str += '<tr><td>ETag</td><td>' + etag + '</td></tr>';
             str += '<tr><td>LastModified</td><td>' + lastModified + '</td></tr>';
             str += '<tr><td>StorageClass</td><td>' + storageClass + '</td></tr>';
