@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>AWS S3 Tool</title>
-        <link rel="stylesheet" type="text/css" href="./css/bootstrap-3.2.0.min.css">
+        <link rel="stylesheet" type="text/css" href="./css/bootstrap-3.3.0.min.css">
         <link rel="stylesheet" type="text/css" href="./css/select2.min.css">
         <link rel="shortcut icon" type="image/x-icon" href="icon-64.png" />
     </head>
@@ -115,22 +115,20 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <div class="well" style="height: 207px; padding: 8px 5px 0 5px; margin-bottom: 8px;">
+                        <div class="well" style="height: 209px; padding: 8px 5px 0 5px; margin-bottom: 8px;">
                             <table class="table table-condensed table-hover" style="margin-bottom: 0; width: 100%; font-size: 11px;">
                                 <thead>
                                     <tr>
                                         <th class="label label-info" style="text-align: left; display: table-cell; font-size: 11px;">Upload Files</th>
                                     </tr>
                                 </thead>
-                                <!-- <tbody id="buckets_list">
-                                    buctets list here
-                                </tbody> -->
+                                <!--  -->
                             </table>
                             <form class="form-horizontal" id="upload" role="form" onsubmit="return false;" style="margin-top: 0; width: 100%; font-size: 11px;">
                                 <div class="form-group" style="margin-bottom: 6px;">
                                     <label class="col-lg-3 control-label" for="input_files" style="padding-right: 0;">File Upload</label>
                                     <div class="col-lg-9" style="padding-top: 7px;">
-                                        <input type="file" id="input_files" style="width: 95%;" multiple></input>
+                                        <input type="file" id="input_files" style="width: 95%;" multiple />
                                     </div>
                                 </div>
                                 <div class="form-group" style="margin-bottom: 0;">
@@ -163,7 +161,7 @@
                                         <input type="checkbox" name="content_type" id="content_type" value="auto" checked> Figure Out Content Types Automatically
                                     </div>
                                 </div>
-                                <div class="form-group" style="margin-bottom: 10px;">
+                                <div class="form-group" style="margin-bottom: 7px;">
                                     <label class="col-lg-3 control-label" for="encryption" style="padding-right: 0;">Encryption</label>
                                     <div class="col-lg-9" style="padding-top: 4px;">
                                         <input type="checkbox" name="encryption" id="encryption" value="encryption"> Use Server Side Encryption
@@ -179,7 +177,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="well" style="height: 245px; padding: 8px 5px 0 5px; margin-bottom: 0; overflow-y: auto;">
+                        <div class="well" style="height: 243px; padding: 8px 5px 0 5px; margin-bottom: 0; overflow-y: auto;">
                             <table class="table table-striped table-condensed table-hover" style="width: 100%; font-size: 11px;">
                                 <thead>
                                     <tr>
@@ -203,17 +201,20 @@
         <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="./js/jquery.cookie.js"></script>
         <script type="text/javascript" src="./js/select2.min.js"></script>
-        <script type="text/javascript" src="./js/aws-sdk-2.0.21.min.js"></script>
-        <script type="text/javascript" src="./js/bootstrap-3.2.0.min.js"></script>
+        <script type="text/javascript" src="./js/aws-sdk-2.1.5.min.js"></script>
+        <script type="text/javascript" src="./js/bootstrap-3.3.0.min.js"></script>
 
         <script type="text/javascript">
         var region;
         AWS.config.update({
-                apiVersion: {s3: '2006-03-01'}
-                // signatureVersion: 'v4'
+                apiVersion: {s3: '2006-03-01'},
+                signatureVersion: 'v4'
         });
 
         jQuery(document).ready(function($) {
+        	$.ajaxSetup ({
+				cache: false //close AJAX cache
+			});
             region = $('#select_regions').val();
             if($.cookie('remember') == 'true') {
                 document.getElementById('remember').checked = true;
@@ -536,7 +537,7 @@
                 var prefix = $('#location').attr('dir');
                 var params = {
                     Bucket: bucket,
-                    Key: file
+                    Key: '' + prefix + file
                 };
                 AWS.config.region = region;
                 var s3 = new AWS.S3();
@@ -557,6 +558,7 @@
 
         function formatFileSize(size){
             if(size == 0) return '';
+            size -= 0;
             if(size < 1024) return size.toFixed(0) + "B";
             if(size < 1048576) {
                 size = size / 1024;
