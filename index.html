@@ -3,11 +3,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>AWS S3 Tool</title>
-        <link rel="stylesheet" type="text/css" href="./css/bootstrap-3.3.0.min.css">
+        <link rel="stylesheet" type="text/css" href="./css/bootstrap-3.3.2.min.css">
         <link rel="stylesheet" type="text/css" href="./css/select2.min.css">
         <link rel="shortcut icon" type="image/x-icon" href="icon-64.png" />
     </head>
-    
+
     <body>
         <div class="navbar navbar-default navbar-static-top" role="navgation" style="min-height: 34px; margin-bottom: 0;">
             <div class="container" style="margin-bottom: 0;">
@@ -166,7 +166,7 @@
                                     <div class="col-lg-9" style="padding-top: 4px;">
                                         <input type="checkbox" name="encryption" id="encryption" value="encryption"> Use Server Side Encryption
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="form-group" style="margin-bottom: 4px;">
                                     <div class="col-lg-offset-3 col-lg-9">
                                         <button id="upload_files" type="button" class="btn btn-default btn-xs">
@@ -182,7 +182,7 @@
                                 <thead>
                                     <tr>
                                         <th class="label label-info" style="min-width: 20%; text-align: left; display: table-cell; font-size: 11px;">Properties</th>
-                                        <th class="label label-info" style="min-width: 70%; text-align: left; display: table-cell; font-size: 11px;"></th>                                        
+                                        <th class="label label-info" style="min-width: 70%; text-align: left; display: table-cell; font-size: 11px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="properties_list">
@@ -195,14 +195,14 @@
     		</div>
     	</div>
         <footer class="footer" style="text-align: center;">
-            &copy;2014 <a href="https://huoqi.github.com">huoqi</a> AWS S3 Tool
+            &copy;2014 <a href="https://github.com/huoqi" target="_blank">huoqi</a> AWS S3 Tool
         </footer>
 
         <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="./js/jquery.cookie.js"></script>
         <script type="text/javascript" src="./js/select2.min.js"></script>
-        <script type="text/javascript" src="./js/aws-sdk-2.1.5.min.js"></script>
-        <script type="text/javascript" src="./js/bootstrap-3.3.0.min.js"></script>
+        <script type="text/javascript" src="./js/aws-sdk-2.1.18.min.js"></script>
+        <script type="text/javascript" src="./js/bootstrap-3.3.2.min.js"></script>
 
         <script type="text/javascript">
         var region;
@@ -230,7 +230,7 @@
                 $('#key').show();
             } else {
                 AWS.config.update({
-                    accessKeyId: aKey, 
+                    accessKeyId: aKey,
                     secretAccessKey: sKey
                 });
             }
@@ -395,7 +395,7 @@
                     $('#uploading').show();
                     AWS.config.region = region;
                     var s3 = new AWS.S3();
-                    
+
                     filesSize += file.size;
                     s3.putObject(params, function(err, data) {
                         if(err) {
@@ -462,7 +462,7 @@
                     }
                     loaded();
                 });
-            }        
+            }
         }
 
         function listBuckets(region) {
@@ -490,7 +490,7 @@
             $('#input_bucket').val(bucket);
         }
 
-        function pageListObjects(bucket, prefix) {              
+        function pageListObjects(bucket, prefix) {
             func.listObjects(bucket, prefix);
         }
 
@@ -501,14 +501,14 @@
             $.each(prefix.split('/'), function(index, val) {
                 if(val != '') {
                     nextPre += val + '/';
-                    str += '/<a href="javascript:;" onclick="pageListObjects(\'' + bucket + '\', \'' + nextPre + '\')">' + val + '</a>'; 
+                    str += '/<a href="javascript:;" onclick="pageListObjects(\'' + bucket + '\', \'' + nextPre + '\')">' + val + '</a>';
                 }
             });
             str += '<nobr>';
             $('#location').attr('bucket',bucket);
             $('#location').attr('dir', prefix);
             $('#location').html(str);
-        } 
+        }
 
         function showProperties(file, size, etag, lastModified, storageClass, owner, url) {
             var filename = file;
@@ -519,7 +519,7 @@
             var str = '<tr><td>Name</td><td>' + file + ' <a onclick="pageDeleteObject(\'' + filename + '\')" ' +
                 'href="javascript:;"><span class="glyphicon glyphicon-trash"></span> </a></td></tr>';
             str += '<tr><td>Size</td><td>' + size ;
-            if( size > 0 ) 
+            if( size > 0 )
                 str += ' (' + formatFileSize(size) + ')';
             str += '</td></tr>';
             str += '<tr><td>ETag</td><td>' + etag + '</td></tr>';
@@ -570,7 +570,7 @@
             } else {
                 size = size / 1073741824;
                 return size.toFixed(3) + "GB";
-            }     
+            }
         }
 
         function toggleKey() {
@@ -590,7 +590,7 @@
         function loaded(){
             $('#loading').css('display', 'none');
         }
-        
+
         </script>
     </body>
 </html>
