@@ -135,8 +135,8 @@
                                     <label class="col-lg-3 control-label" for="select_acl" style="padding-right: 0;">ACL</label>
                                     <div class="col-lg-9">
                                         <select id="select_acl" style="width: 95%;">
-                                            <option value="private">Private</option>
-                                            <option value="public-read" selected="selected">Public Read</option>
+                                            <option value="private" selected="selected">Private</option>
+                                            <option value="public-read">Public Read</option>
                                             <option value="public-read-write">Public Read & Write</option>
                                             <option value="authenticated-read">Authenticated Read</option>
                                             <option value="bucket-owner-read">Bucket Owner Read</option>
@@ -240,7 +240,7 @@
 
             $('#select_acl').select2({
                 placeholder: "Select ACL",
-                allowClear: true
+                allowClear: false
             });
 
             $('#btn_key').click(function() {
