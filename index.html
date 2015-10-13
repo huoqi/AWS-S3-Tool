@@ -3,9 +3,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>AWS S3 Tool</title>
-        <link rel="stylesheet" type="text/css" href="./css/bootstrap-3.3.2.min.css">
-        <link rel="stylesheet" type="text/css" href="./css/select2.min.css">
-        <link rel="shortcut icon" type="image/x-icon" href="icon-64.png" />
+        <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/select2/4.0.0/css/select2.min.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./icon-64.png" />
     </head>
 
     <body>
@@ -198,11 +198,10 @@
             &copy;2014 <a href="https://github.com/huoqi" target="_blank">huoqi</a> AWS S3 Tool
         </footer>
 
-        <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script>
-        <script type="text/javascript" src="./js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="./js/select2.min.js"></script>
-        <script type="text/javascript" src="./js/aws-sdk-2.1.18.min.js"></script>
-        <script type="text/javascript" src="./js/bootstrap-3.3.2.min.js"></script>
+        <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdn.bootcss.com/select2/4.0.0/js/select2.min.js"></script>
+        <script type="text/javascript" src="//cdn.bootcss.com/aws-sdk/2.2.9/aws-sdk.min.js"></script>
+        <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
         <script type="text/javascript">
         var region;
@@ -216,14 +215,13 @@
 				cache: false //close AJAX cache
 			});
             region = $('#select_regions').val();
-            if($.cookie('remember') == 'true') {
+            if(localStorage.getItem('remember') == 'true') {
                 document.getElementById('remember').checked = true;
             }
 
-            var aKey = $.cookie('accessKey');
-            var sKey = $.cookie('secretAccessKey');
-            if(aKey == undefined) aKey = '';
-            if(sKey == undefined) sKey = '';
+            var aKey = localStorage.getItem('accessKey') || '';
+            var sKey = localStorage.getItem('secretAccessKey') || '';
+            
             $('#accessKey').val(aKey);
             $('#secretAccessKey').val(sKey);
             if(aKey == '' || sKey == ''){
@@ -258,13 +256,11 @@
                     $("#key").hide(400);
                     var remember = document.getElementById('remember').checked;
                     if (remember == true) {
-                        $.cookie('accessKey', aKey, {expires: 30});
-                        $.cookie('secretAccessKey', sKey, {expires: 30});
-                        $.cookie('remember', true, {expires: 30});
+                        localStorage.setItem('accessKey', aKey);
+                        localStorage.setItem('secretAccessKey', sKey);
+                        localStorage.setItem('remember', true);
                     } else {
-                        $.cookie('accessKey', '');
-                        $.cookie('secretAccessKey', '');
-                        $.cookie('remember', false);
+                        localStorage.clear();
                     }
                 }
             });
