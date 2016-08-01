@@ -1,11 +1,14 @@
 <!DOCTYPE html >
 <html lang="zh-CN">
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>AWS S3 Tool</title>
-        <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/select2/4.0.0/css/select2.min.css">
-        <link rel="shortcut icon" type="image/x-icon" href="./icon-64.png" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/select2/4.0.3/css/select2.min.css">
+        <link rel="shortcut icon" type="image/x-icon" href="icon-64.png" />
     </head>
 
     <body>
@@ -52,17 +55,20 @@
         			<div class="col-lg-4">
                         <select id="select_regions" style="width: 74%;">
                             <optgroup label="China">
-                                <option value="cn-north-1">Beijing</option>
+                                <option value="cn-north-1" selected="selected">Beijing</option>
                             </optgroup>
                             <optgroup label="Global">
-                                <option value="us-east-1" selected="selected">US-Standard</option>
-                                <option value="us-west-1">US West (Northern California)</option>
-                                <option value="us-west-2">US West (Oregon)</option>
+                                <option value="us-east-1">US-Standard </option>
+                                <option value="us-west-1">US West (N. California) </option>
+                                <option value="us-west-2">US West (Oregon) </option>
+                                <option value="eu-central-1">EU (Frankfurt) </option>
                                 <option value="eu-west-1">EU (Ireland) </option>
+                                <option value="ap-south-1">Asia Pacific (Mumbai) </option>
                                 <option value="ap-southeast-1">Asia Pacific (Singapore) </option>
-                                <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
-                                <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
-                                <option value="sa-east-1">South America (Sao Paulo)</option>
+                                <option value="ap-southeast-2">Asia Pacific (Sydney) </option>
+                                <option value="ap-northeast-1">Asia Pacific (Tokyo) </option>
+                                <option value="ap-northeast-2">Asia Pacific (Seoul) </option>
+                                <option value="sa-east-1">South America (São Paulo) </option>
                             </optgroup>
                         </select>
                         <button id="list_buckets" class="btn btn-sm btn-default" style="float: right; width: 25%; height: 26px; padding: 3px 8px;">List Buckets</button>
@@ -135,12 +141,12 @@
                                     <label class="col-lg-3 control-label" for="select_acl" style="padding-right: 0;">ACL</label>
                                     <div class="col-lg-9">
                                         <select id="select_acl" style="width: 95%;">
-                                            <option value="private" selected="selected">Private</option>
+                                            <option value="bucket-owner-full-control" selected="selected">Bucket Owner Full Control</option>
+                                            <option value="private">Private</option>
                                             <option value="public-read">Public Read</option>
                                             <option value="public-read-write">Public Read & Write</option>
                                             <option value="authenticated-read">Authenticated Read</option>
                                             <option value="bucket-owner-read">Bucket Owner Read</option>
-                                            <option value="bucket-owner-full-control">Bucket Owner Full Control</option>
                                         </select>
                                     </div>
                                 </div>
@@ -198,10 +204,10 @@
             &copy;2014 <a href="https://github.com/huoqi" target="_blank">huoqi</a> AWS S3 Tool
         </footer>
 
-        <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
-        <script type="text/javascript" src="//cdn.bootcss.com/select2/4.0.0/js/select2.min.js"></script>
-        <script type="text/javascript" src="//cdn.bootcss.com/aws-sdk/2.2.9/aws-sdk.min.js"></script>
-        <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bootcss.com/aws-sdk/2.4.11/aws-sdk.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
         <script type="text/javascript">
         var region;
@@ -215,13 +221,14 @@
 				cache: false //close AJAX cache
 			});
             region = $('#select_regions').val();
-            if(localStorage.getItem('remember') == 'true') {
+            if(localStorage.getItem('remember') === 'true') {
                 document.getElementById('remember').checked = true;
             }
-
-            var aKey = localStorage.getItem('accessKey') || '';
-            var sKey = localStorage.getItem('secretAccessKey') || '';
-            
+  
+            var aKey = localStorage.getItem('accessKey');
+            var sKey = localStorage.getItem('secretAccessKey');
+            if(aKey == undefined) aKey = '';
+            if(sKey == undefined) sKey = '';
             $('#accessKey').val(aKey);
             $('#secretAccessKey').val(sKey);
             if(aKey == '' || sKey == ''){
@@ -240,7 +247,7 @@
 
             $('#select_acl').select2({
                 placeholder: "Select ACL",
-                allowClear: false
+                allowClear: true
             });
 
             $('#btn_key').click(function() {
