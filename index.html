@@ -519,7 +519,7 @@
                 file = file.substring(0, file.length-1);
                 file = file.substring(file.lastIndexOf('/')+1);
             }
-            var str = '<tr><td>Name</td><td>' + file + ' <a onclick="pageDeleteObject(\'' + filename + '\')" ' +
+            var str = '<tr><td id="data-file" data-file="' + filename + '">Name</td><td>' + file + ' <a onclick="pageDeleteObject(\'' + filename + '\')" ' +
                 'href="javascript:;"><span class="glyphicon glyphicon-trash"></span> </a></td></tr>';
             str += '<tr><td>Size</td><td>' + size ;
             if( size > 0 )
@@ -529,8 +529,36 @@
             str += '<tr><td>LastModified</td><td>' + lastModified + '</td></tr>';
             str += '<tr><td>StorageClass</td><td>' + storageClass + '</td></tr>';
             str += '<tr><td>Owner</td><td>' + owner + '</td></tr>';
-            str += '<tr><td>URL</td><td><a href="' + url + '" target="_blank" download="' + file + '">' + url + '</a></td></tr>';
+            if (url.length > 0) {
+                str += '<tr><td>URL <a onclick="showPreSignedUrl();" href="javascript:;"><span class="glyphicon glyphicon-download-alt"></span> </a></td><td id="url"><a href="' + url + '" target="_blank" download="' + file + '">' + url + '</a></td></tr>';
+            } else {
+                str += '<tr><td>URL</td><td id="url"></td></tr>';
+            }
             $('#properties_list').html(str);
+        }
+
+        function showPreSignedUrl() {
+            var url = $('#url');
+            var file = $('#data-file');
+            var filename = file.data("file");
+            if (url.html().length > 0) {
+                var preSignedUrl = generatePresignedUrl(filename);
+                var a = url.children("a");
+                a.attr('href', preSignedUrl);
+                a.html(preSignedUrl);
+            }
+        }
+
+        function generatePresignedUrl(file) {
+            var bucket = $('#location').attr('bucket');
+            var prefix = $('#location').attr('dir');
+            var params = {
+                Bucket: bucket,
+                Key: '' + prefix + file
+            };
+            AWS.config.region = region;
+            var s3 = new AWS.S3();
+            return s3.getSignedUrl('getObject', params);
         }
 
         function pageDeleteObject(file) {
