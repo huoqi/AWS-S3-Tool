@@ -56,12 +56,6 @@ jQuery(document).ready(function($) {
   $(window).resize(function() {
     resizeWindow(bucketArea, objectArea);
   });
-  //
-  // $.ajaxSetup({
-  //   cache: false, //close AJAX cache
-  //   ajaxStart: NProgress.start(),
-  //   ajaxStop: NProgress.done()
-  // });
 
   if (region === 'us-east-1') {
     // set region.
@@ -501,12 +495,10 @@ function about() {
 }
 
 function loading() {
-  // $('#loading').css('display', 'inline');
   NProgress.start();
 }
 
 function loaded() {
-  // $('#loading').css('display', 'none');
   NProgress.done();
 }
 
@@ -516,14 +508,6 @@ function getCacheBucketLocation(bucketName) {
 
 function setCacheBucketLocation(bucketName, region) {
   sessionStorage.setItem('BUCKETLOCATION-' + bucketName, region);
-}
-
-function getBLCacheStatus() {
-  return sessionStorage.getItem('Bucket-status-getting-location');
-}
-
-function setBLCacheStatus(status) {
-  sessionStorage.setItem('Bucket-status-getting-location', status);
 }
 
 Handlebars.registerHelper('replaceDotInBucket', function(bucket) {
