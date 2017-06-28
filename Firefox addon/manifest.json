@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "AWS S3 Tool",
+  "description": "A web page tool for AWS S3.",
+  "version": "1.0",
+  "homepage_url": "https://github.com/huoqi/AWS-S3-Tool",
+  "icons": {
+    "64": "icon-64.png"
+  },
+  "background": {
+    "scripts": ["index.js"]
+  },
+  "browser_action": {
+    "default_icon": "icon-64.png"
+  }
+}
