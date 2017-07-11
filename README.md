@@ -3,7 +3,9 @@ AWS-S3-Tool
 
 A static html page tool for AWS S3
 
-###### Example: <https://s3.amazonaws.com/aws-s3-tool.xinjian.io/index.html>
+###### Example: <https://s3.amazonaws.com/aws-s3-tool.xinjian.io/index.html> 
+
+###### Firefox Add-ons: <https://addons.mozilla.org/en-US/firefox/addon/aws-s3-tool>
 
 #### Usage:
   * For global, you should upload these files to any bucket of _US-Standard_ region, and set them public readable.
