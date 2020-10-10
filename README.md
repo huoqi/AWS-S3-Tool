@@ -24,4 +24,4 @@ A static html page tool for AWS S3
         <AllowedHeader>*</AllowedHeader>
       </CORSRule>
     </CORSConfiguration>
-     
+ 
