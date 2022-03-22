@@ -1,4 +1,4 @@
-AWS-S3-Tool
+AWS-S3-Tool (Deprecated)
 ===========
 
 A static html page tool for AWS S3
